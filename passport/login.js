@@ -1,6 +1,12 @@
 var LocalStrategy   = require('passport-local').Strategy;
 var User = require('../models/user');
 var bCrypt = require('bcrypt-nodejs');
+
+
+const passportJWT = require("passport-jwt");
+const JWTStrategy   = passportJWT.Strategy;
+const ExtractJWT = passportJWT.ExtractJwt;
+
 module.exports = function(passport){
 	passport.use('login', new LocalStrategy({
   	passReqToCallback : true
@@ -22,6 +28,9 @@ module.exports = function(passport){
     );
   })
 );
+
+
+
 
 	var isValidPassword = function(user, password){
   	return bCrypt.compareSync(password, user.password);

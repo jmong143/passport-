@@ -1,6 +1,7 @@
 var express = require('express');
 var router = express.Router();
 var mongoose = require('mongoose');
+const jwt = require('jsonwebtoken');
 
 
 var isAuthenticated = function (req, res, next) {
@@ -59,22 +60,24 @@ module.exports = function(passport){
         return res.send({message : 'failed', resultMessage: "Invalid User"});
       }
 
-      req.login(user, loginErr => {
+      req.login(user, {session: false}, loginErr => {
         if (loginErr) {
+					console.log(">>>" + loginErr)
           return next(loginErr);
         }
-        var objLoginSuccess = {
-          message : 'success',
-          user
-        }
-        return res.send(objLoginSuccess);
+				const token = jwt.sign(user.toJSON(), 'secret101', {
+	        expiresIn: '15min'
+	      });
+       	return res.json({user, token});
       });
     })(req, res, next);
   });
 
 
-  router.get('/me', function(req, res){
-  if(!req.user){
+  router.get('/me', passport.authenticate('jwt', {session: false}), function(req, res){
+		console.log(">>>>>>>>>>>..." + res)
+		res.send({"test": "testtt"})
+  /*if(!req.user){
     var objMe = {message: "failed",result: "Please Login First"}
   }else{
     console.log("THIS IS MEEE-> " + req.user);
@@ -88,7 +91,7 @@ module.exports = function(passport){
       }
     }
   }
-    res.send(objMe);
+    res.send(objMe);*/
   });
 
 
