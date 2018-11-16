@@ -74,24 +74,16 @@ module.exports = function(passport){
   });
 
 
-  router.get('/me', passport.authenticate('jwt', {session: false}), function(req, res){
-		console.log(">>>>>>>>>>>..." + res)
-		res.send({"test": "testtt"})
-  /*if(!req.user){
-    var objMe = {message: "failed",result: "Please Login First"}
-  }else{
-    console.log("THIS IS MEEE-> " + req.user);
-    var objMe = {
-      message: "success",
-      currentUser:{
-        objectId : req.user._id,
-        username : req.user.username,
-        fullname: req.user.fullname,
-        email: req.user.email
-      }
-    }
-  }
-    res.send(objMe);*/
+  // router.get('/me', passport.authenticate('jwt', {session: false}), function(req, res){
+  router.get('/me', function(req, res){
+		let token = req.headers['token'];
+		console.log("token==> " + token);
+		if (!token) return res.status(401).send({ auth: false, message: 'No token provided.' });
+
+		jwt.verify(token, 'secret101', function(err, decoded) {
+    	if (err) return res.status(500).send({ auth: false, message: 'Failed to authenticate token.' });
+    	res.status(200).send(decoded);
+  	});
   });
 
 
