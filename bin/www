@@ -5,14 +5,14 @@
  */
 
 var app = require('../app');
-var debug = require('debug')('ipostmo-nodejs-mongo:server');
+var debug = require('debug')('passport-auth:server');
 var http = require('http');
 
 /**
  * Get port from environment and store in Express.
  */
 
-var port = normalizePort(process.env.PORT || '2000');
+var port = normalizePort(process.env.PORT || '2100');
 app.set('port', port);
 
 /**

@@ -1,13 +1,13 @@
-var express = require('express');
-var path = require('path');
-var favicon = require('serve-favicon');
-var logger = require('morgan');
-var cookieParser = require('cookie-parser');
-var bodyParser = require('body-parser');
-var mongoose = require('mongoose');
+let express = require('express');
+let path = require('path');
+let logger = require('morgan');
+let cookieParser = require('cookie-parser');
+let bodyParser = require('body-parser');
+let mongoose = require('mongoose');
+let passport = require('passport');
 
-mongoose.connect('mongodb://localhost/passportAuth');
-var app = express();
+
+let app = express();
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 
@@ -20,54 +20,29 @@ app.use(function (req, res, next) {
   next();
 });
 
-// override with POST having ?_method=PUT
-//app.use(methodOverride('_method'))
-
-
-process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0";
-
-
-
-// uncomment after placing your favicon in /public
-//app.use(favicon(path.join(__dirname, 'public', 'favicon.ico')));
 app.use(logger('dev'));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
+async function run() {
+    mongoose.set('useFindAndModify', false);
+    mongoose.connect('mongodb://127.0.0.1/passportAuth', { useNewUrlParser: true });
+    // await mongoose.connection.dropDatabase();
+}
+run().catch(error => console.error(error.stack));
 
 
-
-var passport = require('passport');
-var expressSession = require('express-session');
-app.use(expressSession({secret: 'mySecretKey'}));
 app.use(passport.initialize());
-//app.use(passport.session());
-app.use(passport.session({
-    secret: 'something',
-    cookie: {
-        secure: true
-}}));
-
-
-var flash = require('connect-flash');
-app.use(flash());
-
-
-// Initialize Passport
-var initPassport = require('./passport/init');
+let initPassport = require('./passport/init');
 initPassport(passport);
 
-
-var auth = require('./routes/auth')(passport);
-
+let auth = require('./routes/auth')(passport);
 app.use('/passport-auth', auth);
-
-
 
 //app.use(routes);
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
-  var err = new Error('Not Found');
+  let err = new Error('Not Found');
   err.status = 404;
   next(err);
 });

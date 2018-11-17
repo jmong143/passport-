@@ -14,8 +14,7 @@ module.exports = function(passport){
           return done(err);
         }
         if (user) {
-					console.log("------------------------?" + user);
-          return done(null, false, req.flash('message','User Already Exists'));
+          return done(null, false, 'User already exists');
         }else{
         	var newUser = new User();
           		newUser.username = username;
@@ -27,9 +26,9 @@ module.exports = function(passport){
               newUser.save(function(err) {
 			        if (err){
 			        	console.log('Error in Saving user: '+ err);
-								return done(null, "Error in Saving User");
+								return done(null, false, "Error in Saving User");
 			        }
-							return done(null, newUser);
+							return done(null, newUser, "Congratulations, You have successfully registered to PassportJS");
         		});
       		}
     	});

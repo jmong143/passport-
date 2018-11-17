@@ -17,13 +17,13 @@ module.exports = function(passport){
         	return done(err);
         if (!user){
         	console.log('User Not Found with username '+ username);
-          return done(null, false, req.flash('message', 'User Not found.'));
+          return done(null, false, 'Invalid username of password');
         }
         if (!isValidPassword(user, password)){
         	console.log('Invalid Password');
-          return done(null, false, req.flash('message', 'Invalid Password'));
+          return done(null, false, 'Invalid Password');
         }
-        return done(null, user);
+        return done(null, user, 'Successfuly Logged In');
       }
     );
   })
