@@ -3,6 +3,8 @@ let router = express.Router();
 let mongoose = require('mongoose');
 const jwt = require('jsonwebtoken');
 
+const UserController = require('../controller/UserController');
+
 module.exports = (passport) => {
 
   router.get('/login', (req, res) => {
@@ -10,19 +12,8 @@ module.exports = (passport) => {
   });
 
   router.post('/login', async (req, res, next) => {
-    await passport.authenticate('login', (err, user, message) => {
-      if (err) return next(err);
-      if(! user) return res.send({"message": message });
-      req.login(user, {session: false}, loginErr => {
-        if (loginErr) {
-          return next(loginErr);
-        }
-        const token = jwt.sign(user.toJSON(), 'secret101', {
-          expiresIn: '15min'
-        });
-        return res.json({message, user, token});
-      });
-    })(req, res, next);
+    let loginUser = await UserController.login(passport, req, res);
+    res.send(loginUser)
   });
 
   router.get('/signup', (req, res) => {

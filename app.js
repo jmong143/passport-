@@ -7,9 +7,6 @@ let passport = require('passport');
 
 let connection = require('./config/connection');
 connection("mongodb", "127.0.0.1", "passportAuth")
-/*
-connection.mongodb("127.0.0.1", "passportAuth")
-*/
 
 
 let app = express();
@@ -33,7 +30,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 
 app.use(passport.initialize());
-let initPassport = require('./passport/init');
+let initPassport = require('./service/authentication/init');
 initPassport(passport);
 
 let auth = require('./routes/auth')(passport);
