@@ -3,8 +3,13 @@ let path = require('path');
 let logger = require('morgan');
 let cookieParser = require('cookie-parser');
 let bodyParser = require('body-parser');
-let mongoose = require('mongoose');
 let passport = require('passport');
+
+let connection = require('./config/connection');
+connection("mongodb", "127.0.0.1", "passportAuth")
+/*
+connection.mongodb("127.0.0.1", "passportAuth")
+*/
 
 
 let app = express();
@@ -24,12 +29,7 @@ app.use(logger('dev'));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
-async function run() {
-    mongoose.set('useFindAndModify', false);
-    mongoose.connect('mongodb://127.0.0.1/passportAuth', { useNewUrlParser: true });
-    // await mongoose.connection.dropDatabase();
-}
-run().catch(error => console.error(error.stack));
+
 
 
 app.use(passport.initialize());
